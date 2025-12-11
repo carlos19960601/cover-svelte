@@ -7,14 +7,14 @@
 	<Head />
 
 	<div class="pt-14 w-full flex flex-col items-center">
-		<section>
+		<section class="pt-16">
 			<div class="font-bold text-center">
 				<h1 class="text-5xl md:text-6xl font-extrabold">ThisCover</h1>
 				<h2 class="text-3xl md:text-4xl font-bold mt-4">
 					一个 <span class="underline decoration-wavy decoration-red-400 underline-offset-6"
 						>免费、漂亮</span
 					>
-					的{' '}
+					的
 					<span class="text-primary">封面生成器</span>
 				</h2>
 			</div>
