@@ -3,6 +3,7 @@
 	import { coverState } from '$lib/states/cover.svelte';
 	import type { IconOption } from '$lib/types/settings';
 	import { CheckIcon, ChevronDownIcon } from '@lucide/svelte';
+	import throttle from 'lodash/throttle';
 	import { Button } from './ui/button';
 	import {
 		Command,
@@ -12,6 +13,7 @@
 		CommandItem,
 		CommandList
 	} from './ui/command';
+	import { Input } from './ui/input';
 	import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
 
 	let open = $state(false);
@@ -44,11 +46,13 @@
 		}
 	};
 
-	$effect(() => {
-		fetchSearchResults(coverState.coverSetting.icon.label);
-	});
+	const throttledFetchSearchResults = throttle(async (query: string) => {
+		await fetchSearchResults(query);
+	}, 300);
 
-	$effect(() => {});
+	$effect(() => {
+		throttledFetchSearchResults(query);
+	});
 </script>
 
 {#snippet formatOptionLabel(icon: IconOption)}
@@ -71,7 +75,7 @@
 				<ChevronDownIcon className="opacity-50" />
 			</Button>
 		</PopoverTrigger>
-		<PopoverContent>
+		<PopoverContent class="p-0">
 			<Command>
 				<CommandInput placeholder="请搜索图标" class="h-9" bind:value={query} />
 				<CommandList>
@@ -79,9 +83,12 @@
 					<CommandGroup>
 						{#each options as option}
 							<CommandItem
-								key={option.value}
 								value={option.value}
 								class="w-full flex items-center justify-between"
+								onSelect={() => {
+									coverState.coverSetting.icon = option;
+									open = false;
+								}}
 							>
 								{@render formatOptionLabel(option)}
 								<CheckIcon
@@ -96,4 +103,13 @@
 			</Command>
 		</PopoverContent>
 	</Popover>
+
+	<div class="h-full w-15 relative overflow-hidden">
+		<Input
+			type="file"
+			accept="image/png, image/jpeg, image/webp"
+			class="absolute h-full w-fit right-0 top-0 opacity-0 cursor-pointer"
+		/>
+		<Button class="cursor-pointer pointer-events-none">上传</Button>
+	</div>
 </div>
